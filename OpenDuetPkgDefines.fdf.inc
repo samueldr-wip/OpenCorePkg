@@ -75,6 +75,9 @@
   INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   INF  OpenCorePkg/Platform/OpenPartitionDxe/PartitionDxe.inf
 
+  # Misc
+  INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+
   #
   # Usb Support
   #
