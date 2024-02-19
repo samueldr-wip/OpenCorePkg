@@ -157,6 +157,10 @@
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
   MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf {
+    <PcdsFixedAtBuild>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
+      gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x10000
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x10000
     <LibraryClasses>
       OcDirectResetLib|OpenCorePkg/Library/OcDirectResetLib/OcDirectResetLib.inf
       OcFlexArrayLib|OpenCorePkg/Library/OcFlexArrayLib/OcFlexArrayLib.inf
@@ -266,9 +270,6 @@
 [PcdsFixedAtBuild]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"Acidanthera"
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010
-  gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
-  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x10000
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x10000
   gOpenCorePkgTokenSpaceGuid.PcdCanaryAllowRdtscFallback|TRUE
   gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportFv|0x02
   #
