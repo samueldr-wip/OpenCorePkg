@@ -189,6 +189,7 @@ start:
     mov     es, ax                  ; es <- 0
     mov     ds, ax                  ; ds <- 0
 
+    LogString(boot_init_str)
     DebugChar('>')
 
 %if DEBUG
@@ -666,6 +667,7 @@ test_str        db  'test', 0
 done_str        db  'done', 0
 %endif
 
+boot_init_str   db  'init', 0
 boot_error_str  db  'error', 0
 
 ;--------------------------------------------------------------------------
@@ -683,7 +685,7 @@ pad_boot:
     times  428-($-$$) db 0  ; 428 = 440 - len(log_title_str)
 
 log_title_str:
-    db  10, 13, 'boot0af: ', 0  ; can be use as signature
+    db  10, 13, 'OD0: ', 0  ; can be used as a signature
 
 pad_table_and_sig:
     times 510-($-$$) db 0
