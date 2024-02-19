@@ -58,6 +58,17 @@
   # BIOS Block I/O
   INF OpenCorePkg/Legacy/BootPlatform/BlockIoDxe/BlockIoDxe.inf
 
+#
+# Other DUET build, without I/O (to check USB issues)
+#
+!if ($(ARCH) == X64)
+  [FV.DuetEfiMainFvNoIoX64]
+!else
+  [FV.DuetEfiMainFvNoIoIA32]
+!endif
+
+  !include OpenDuetPkgDefines.fdf.inc
+
 ################################################################################
 #
 # Rules are use with the [FV] section's module INF type to define

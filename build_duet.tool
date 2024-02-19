@@ -6,6 +6,7 @@ imgbuild() {
   VARIANTS=(
     ""
     "BlockIo"
+    "NoIo"
   )
 
   echo "Erasing older files..."
