@@ -46,11 +46,6 @@
 DEBUG               EQU     0
 
 ;
-; Set to 1 to enable verbose mode.
-;
-VERBOSE             EQU     0
-
-;
 ; Various constants.
 ;
 NULL                EQU     0
@@ -161,11 +156,17 @@ DIRBUFSEG           EQU     0x1000                              ; Cluster sizes 
 
     ORG     kBoot1LoadAddr
 
+; See:
+; https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system#Boot_Sector
+; https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system#FAT32_Extended_BIOS_Parameter_Block
+
+    ; 3 "dummy" jump instructions
     jmp     start
     times   3-($-$$) nop
 
-gOEMName            times   8   db  0 ;OEMNAME
-gBPS                dw      0
+; Nulled-out data for...
+gOEMName            times   8   db  0     ; 0x003 OEMNAME
+gBPS                dw      0             ; 0x00B
 gSPC                db      0
 gReservedSectors    dw      0
 gNumFats            db      0
@@ -177,9 +178,21 @@ gCrap2              times   4   db  0
 gRootCluster        dd      0
 gCrap3              times   16  db  0
 
-gBIOSDriveNumber    db      0
-gExtInfo            times   25  db  0
-gFileName           db      "BOOT       " ; Used as a magic string in boot0
+gBIOSDriveNumber    db      0             ; 0x040 Physical Drive Number
+gExtInfo            times   6   db  0     ; 0x041~~
+gFatLabel           db      "NO NAME    " ; 0x047
+gFatFsType          db      "FAT32   "    ; 0x052 File system type
+; End of Extended BIOS Parameter Block
+
+;
+; Start of actual program data 0x05A
+;
+
+; NOTE: "BO" from this string is used as a magic string in boot0 (kBoot1FAT32Magic)
+; Filename in 8.3 format for the combined preamble + Duet.FV
+gFileName           db      "BOOT       "
+; Make gFileName null-terminated for re-use...
+gFileName_          db      NULL
 
 ;--------------------------------------------------------------------------
 ; Boot code is loaded at 0:E000h.
@@ -215,9 +228,7 @@ start:
 ;
 findRootBoot:
 
-%if VERBOSE
-    LogString(init_str)
-%endif
+    PrintString(init_str)
 
     mov     eax, [gRootCluster]
 
@@ -278,6 +289,8 @@ boot2:
     DebugChar ('!')
 %endif
 
+    PrintString(gFileName)
+
     mov     dl, [gBIOSDriveNumber]          ; load BIOS drive number
     jmp     kBoot2Segment:kBoot2Address
 
@@ -285,10 +298,7 @@ dserror:
     pop ds
 
 error:
-
-%if VERBOSE
-    LogString(error_str)
-%endif
+    PrintString(error_str)
 
 hang:
     hlt
@@ -466,31 +476,6 @@ readLBA:
     popad
     ret
 
-%if VERBOSE
-
-;--------------------------------------------------------------------------
-; Write a string with 'boot1: ' prefix to the console.
-;
-; Arguments:
-;   ES:DI   pointer to a NULL terminated string.
-;
-; Clobber list:
-;   DI
-;
-log_string:
-    pushad
-
-    push    di
-    mov     si, log_title_str
-    call    print_string
-
-    pop     si
-    call    print_string
-
-    popad
-
-    ret
-
 ;-------------------------------------------------------------------------
 ; Write a string to the console.
 ;
@@ -513,8 +498,6 @@ print_string:
 
 .exit:
     ret
-
-%endif ; VERBOSE
 
 %if DEBUG
 
@@ -580,11 +563,8 @@ print_char:
 ; Static data.
 ;
 
-%if VERBOSE
-log_title_str   db      CR, LF, 'b1f: ', NULL
-init_str        db      'init', NULL
-error_str       db      'error', NULL
-%endif
+init_str            db      CR, LF, 'OD1: ', NULL
+error_str           db      'ERROR', NULL
 
 ;--------------------------------------------------------------------------
 ; Pad the rest of the 512 byte sized sector with zeroes. The last
@@ -595,8 +575,11 @@ error_str       db      'error', NULL
 
 pad_table_and_sig:
     times           496-($-$$) db 0
+    ; 0x1F0 → (Reserved)
     ; We will put volume magic identifier here
     times           14 db 0
+    ; Except that no, it's being filled with random bytes?
+    ; $ dd if=/dev/urandom of=newbs skip=496 seek=496 bs=1 count=14 conv=notrunc
     dw              kBootSignature
 
     ABSOLUTE        kBoot1LoadAddr + kSectorBytes
