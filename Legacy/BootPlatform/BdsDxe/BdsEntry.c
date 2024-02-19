@@ -27,10 +27,30 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiLib.h>
+#include <Library/PrintLib.h>
 
 #include <Protocol/Capsule.h>
 #include <Protocol/BlockIo.h>
 #include <Protocol/VariableLock.h>
+
+///
+/// BdsEntry user-facing messages. Ordinary DEBUG messages are stripped entirely.
+///
+STATIC
+VOID
+EFIAPI
+BdsEntryMessage (
+  IN  CONST CHAR16  *FormatString,
+  ...
+) {
+  VA_LIST  Marker;
+  CHAR16 OutputString[512];
+
+  VA_START (Marker, FormatString);
+  UnicodeVSPrint (OutputString, sizeof (OutputString), FormatString, Marker);
+  VA_END (Marker);
+  gST->ConOut->OutputString (gST->ConOut, OutputString);
+}
 
 ///
 /// BDS arch protocol instance initial value.
@@ -458,6 +478,17 @@ BdsEntry (
   //
   PlatformBdsPolicyBehavior ();
 
+  // NOTE: any printing before this point will not be printed,
+  //       PlatformBdsPolicyBehavior connects the console.
+
+  //
+  // Print debug info early on...
+  // This will tell developers that BdsEntry is running when end-users report issues.
+  //
+  BdsEntryMessage (L"INFO: Duet is starting...\r\n");
+  BdsEntryMessage (L"INFO: \"%S\"\r\n", gST->FirmwareVendor);
+  BdsEntryMessage (L"      Version: %08x\r\n", gST->FirmwareRevision);
+
   //
   // Signal the EVT_SIGNAL_READY_TO_BOOT event
   //
@@ -471,15 +502,14 @@ BdsEntry (
   //
   // Try to boot any volume
   //
-  gST->ConOut->OutputString (gST->ConOut, L"BOOT MISMATCH!\r\n");
-  gBS->Stall (3000000);
+  BdsEntryMessage (L"ERROR: Could not find Duet payload on the current partition...\r\n");
   BdsBootDeviceSelect (FALSE);
 
   //
   // Abort with error.
   //
-  gST->ConOut->OutputString (gST->ConOut, L"BOOT FAIL!\r\n");
-  gBS->Stall (3000000);
+  BdsEntryMessage (L"FATAL: Could not find Duet payload on any partitions...\r\n");
+
   CpuDeadLoop ();
 
   //
