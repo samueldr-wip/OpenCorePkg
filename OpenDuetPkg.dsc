@@ -138,7 +138,10 @@
   VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLibRuntimeDxe.inf
 
 [Components]
+  # NOTE: used by build_duet.tool
   OpenCorePkg/Legacy/BootPlatform/DxeIpl/DxeIpl.inf
+
+  # NOTE: used by build_duet.tool
   MdeModulePkg/Core/Dxe/DxeMain.inf {
     <LibraryClasses>
       DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
