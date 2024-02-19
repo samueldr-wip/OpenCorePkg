@@ -3,6 +3,7 @@
 { callPackage }:
 
 {
+  OpenDuet = callPackage ./openduet.nix {};
 }
 
 ) {}
