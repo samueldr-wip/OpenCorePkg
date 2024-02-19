@@ -272,6 +272,13 @@ BdsBootDeviceSelect (
     }
     else {
       BdsEntryMessage (L"INFO: Launching...\r\n");
+#if 0
+      for (int i = 0; i < 30; i++) {
+        gBS->Stall (100000);
+        BdsEntryMessage (L".");
+      }
+      BdsEntryMessage (L"\r\n");
+#endif
       Status = gBS->StartImage (
              ImageHandle,
              0,
