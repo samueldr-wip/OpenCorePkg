@@ -261,7 +261,7 @@
 [PcdsFeatureFlag]
 
 [PcdsFixedAtBuild]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"Acidanthera"
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"OpenDuet Standalone"
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010
   gOpenCorePkgTokenSpaceGuid.PcdCanaryAllowRdtscFallback|TRUE
   gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportFv|0x02
