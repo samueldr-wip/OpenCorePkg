@@ -154,6 +154,11 @@ if [ ! -d "${FV_TOOLS}" ]; then
   exit 1
 fi
 
+# Shim to bypass most of the build script...
+# This is used to call `imgbuild` directly from the Nix derivation.
+"$@"
+exit "$?"
+
 if [ "${INTREE}" != "" ]; then
   # In-tree compilation is merely for packing.
   cd .. || exit 1
