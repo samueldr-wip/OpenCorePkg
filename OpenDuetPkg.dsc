@@ -110,11 +110,17 @@
   OcMemoryLib|OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf
   OcMiscLib|OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf
   OcStringLib|OpenCorePkg/Library/OcStringLib/OcStringLib.inf
+
   #
-  # To save size, use NULL library for DebugLib and ReportStatusCodeLib.
-  # If need status code output, do library instance overriden.
+  # Debug library configuration
   #
-  DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
+!if $(TARGET) == RELEASE
+  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
+  #DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  #DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+  DebugLib|MdePkg/Library/UefiDebugLibConOut/UefiDebugLibConOut.inf
+!endif
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
 
@@ -260,10 +266,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x10000
   gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x10000
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
-  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel|0x0
-  gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
   gOpenCorePkgTokenSpaceGuid.PcdCanaryAllowRdtscFallback|TRUE
   gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportFv|0x02
   #
@@ -278,19 +280,47 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy|0xFFFFFFFFFFFFFF40
   gEfiMdePkgTokenSpaceGuid.PcdImageLoaderAllowMisalignedOffset|TRUE
 
+!if $(TARGET) == RELEASE
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
+  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel|0x0
+  gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
+!else
+  # DEBUG_ASSERT_ENABLED | DEBUG_PRINT_ENABLED | DEBUG_CODE_ENABLED | CLEAR_MEMORY_ENABLED | ASSERT_DEADLOOP_ENABLED
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2f
+  # DEBUG_ASSERT_ENABLED | DEBUG_PRINT_ENABLED | DEBUG_CODE_ENABLED | CLEAR_MEMORY_ENABLED
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xf
+  # DEBUG_ASSERT_ENABLED | DEBUG_PRINT_ENABLED | CLEAR_MEMORY_ENABLED
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xb
+  # DEBUG_ASSERT_ENABLED | DEBUG_PRINT_ENABLED
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x3
+  # DEBUG_PRINT_ENABLED
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|2
+  # DEBUG_ERROR | DEBUG_WARN | DEBUG_INFO
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
+  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel|0x80000042
+  gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
+!endif
+
 [BuildOptions]
-  MSFT:NOOPT_*_*_CC_FLAGS    = -D OC_TARGET_RELEASE=1 /FAcs -Dinline=__inline  /GS /kernel
-  MSFT:DEBUG_*_*_CC_FLAGS    = -D OC_TARGET_RELEASE=1 /FAcs -Dinline=__inline -DMDEPKG_NDEBUG /GS /kernel
-  MSFT:RELEASE_*_*_CC_FLAGS  = -D OC_TARGET_RELEASE=1 /FAcs -Dinline=__inline -DMDEPKG_NDEBUG /GS /kernel
+!if $(TARGET) == RELEASE
+  DEFINE DEBUG_FLAGS = -DMDEPKG_NDEBUG
+!else
+  DEFINE DEBUG_FLAGS =
+!endif
 
-  XCODE:NOOPT_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 -fno-unwind-tables -O0 -fstack-protector-strong -ftrivial-auto-var-init=pattern
-  XCODE:DEBUG_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 -fno-unwind-tables -flto -Os -DMDEPKG_NDEBUG -fstack-protector-strong -ftrivial-auto-var-init=pattern
-  XCODE:RELEASE_*_*_CC_FLAGS = -D OC_TARGET_RELEASE=1 -fno-unwind-tables -flto -Os -DMDEPKG_NDEBUG -fstack-protector-strong -ftrivial-auto-var-init=pattern
+  MSFT:NOOPT_*_*_CC_FLAGS    = -D OC_TARGET_RELEASE=1 /FAcs -Dinline=__inline $(DEBUG_FLAGS) /GS /kernel
+  MSFT:DEBUG_*_*_CC_FLAGS    = -D OC_TARGET_RELEASE=1 /FAcs -Dinline=__inline $(DEBUG_FLAGS) /GS /kernel
+  MSFT:RELEASE_*_*_CC_FLAGS  = -D OC_TARGET_RELEASE=1 /FAcs -Dinline=__inline $(DEBUG_FLAGS) /GS /kernel
 
-  GCC:NOOPT_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
-  GCC:DEBUG_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 -DMDEPKG_NDEBUG -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
-  GCC:RELEASE_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 -DMDEPKG_NDEBUG -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+  XCODE:NOOPT_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 -fno-unwind-tables       -O0 $(DEBUG_FLAGS) -fstack-protector-strong -ftrivial-auto-var-init=pattern
+  XCODE:DEBUG_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 -fno-unwind-tables -flto -Os $(DEBUG_FLAGS) -fstack-protector-strong -ftrivial-auto-var-init=pattern
+  XCODE:RELEASE_*_*_CC_FLAGS = -D OC_TARGET_RELEASE=1 -fno-unwind-tables -flto -Os $(DEBUG_FLAGS) -fstack-protector-strong -ftrivial-auto-var-init=pattern
 
-  CLANGGCC:NOOPT_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
-  CLANGGCC:DEBUG_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 -DMDEPKG_NDEBUG -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
-  CLANGGCC:RELEASE_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 -DMDEPKG_NDEBUG -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+  GCC:NOOPT_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 $(DEBUG_FLAGS) -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+  GCC:DEBUG_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 $(DEBUG_FLAGS) -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+  GCC:RELEASE_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 $(DEBUG_FLAGS) -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+
+  CLANGGCC:NOOPT_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 $(DEBUG_FLAGS) -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+  CLANGGCC:DEBUG_*_*_CC_FLAGS     = -D OC_TARGET_RELEASE=1 $(DEBUG_FLAGS) -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
+  CLANGGCC:RELEASE_*_*_CC_FLAGS   = -D OC_TARGET_RELEASE=1 $(DEBUG_FLAGS) -Wno-unused-but-set-variable -fstack-protector-strong -mstack-protector-guard=global -Wuninitialized
