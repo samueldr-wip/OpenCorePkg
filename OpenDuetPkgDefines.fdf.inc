@@ -70,21 +70,28 @@
   INF  OpenCorePkg/Legacy/BootPlatform/BiosVideo/BiosVideo.inf
   INF  OpenCorePkg/Legacy/BootPlatform/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
-  # ISA (e.g. PS/2 devices)
-  INF  OvmfPkg/SioBusDxe/SioBusDxe.inf
-
-  # Keyboard input (OpenCore has custom drivers)
-  # INF  MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KeyboardDxe.inf
-  # INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
-
-  # Mouse input (PS/2 is usually customised for touchpad)
-  # INF  MdeModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
-  # INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
-
   # Generic disk I/O (Unicode collation is used by e.g. FAT)
   INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   INF  OpenCorePkg/Platform/OpenPartitionDxe/PartitionDxe.inf
+
+  #
+  # Usb Support
+  #
+  INF MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+  INF MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+  INF MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+  INF MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+
+  # ISA (e.g. PS/2 devices)
+  INF  OvmfPkg/SioBusDxe/SioBusDxe.inf
+
+  # PS/2
+  INF  MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KeyboardDxe.inf
+  INF  MdeModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
 
   # ACPI and SMBIOS (convenience protocols are optional)
   # INF  OpenCorePkg/Legacy/BootPlatform/SmbiosGenDxe/SmbiosGen.inf

@@ -44,12 +44,6 @@
   INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 
-  # USB (UHCI may be used for input, XHCI cannot be booted from)
-  INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
-  INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
-  INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
-
 #
 # Alternative DUET build (with Block I/O driver)
 #
