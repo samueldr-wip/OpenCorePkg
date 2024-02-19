@@ -13,9 +13,9 @@
 #
 ##
 
-  BlockSize          = 0x10000
-  NumBlocks          = 22
-  FvAlignment        = 16         #FV alignment and FV attributes setting.
+  BlockSize          = 0x40       # Arbitrary 64 bytes block size
+  NumBlocks          = 0          # Compressed in build_duet.tool
+  FvAlignment        = 16         # FV alignment and FV attributes setting.
   ERASE_POLARITY     = 1
   MEMORY_MAPPED      = TRUE
   STICKY_WRITE       = TRUE
