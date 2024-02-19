@@ -273,11 +273,6 @@
   gOpenCorePkgTokenSpaceGuid.PcdCanaryAllowRdtscFallback|TRUE
   gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportFv|0x02
   #
-  # Policy required to allow legacy, non-aligned, non-signed Apple images
-  # such as HfsPlusLegacy.efi.
-  #
-  gEfiMdePkgTokenSpaceGuid.PcdImageProtectionPolicy|0x00000003
-  #
   # PcdDxeNxMemoryProtectionPolicy and PcdImageLoaderAllowMisalignedOffset
   # settings for Linux EFI stub (same as OvmfPkg LINUX_LOADER settings).
   #
