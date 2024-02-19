@@ -97,9 +97,9 @@
   INF  MdeModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
 
   # ACPI and SMBIOS (convenience protocols are optional)
-  # INF  OpenCorePkg/Legacy/BootPlatform/SmbiosGenDxe/SmbiosGen.inf
-  # INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  # INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  INF  OpenCorePkg/Legacy/BootPlatform/SmbiosGenDxe/SmbiosGen.inf
+  INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 
   # Filesystems (FAT is mandatory)
   INF  FatPkg/EnhancedFatDxe/Fat.inf
