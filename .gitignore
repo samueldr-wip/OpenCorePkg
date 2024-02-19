@@ -93,3 +93,7 @@ Utilities/TestFatDxe/TestFatDxe
 Utilities/LegacyBoot/ROOT
 Utilities/LegacyBoot/OpenCore.raw
 Utilities/LegacyBoot/boot
+
+# Nix stuff
+result
+result-*
