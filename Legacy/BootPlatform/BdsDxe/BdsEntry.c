@@ -255,6 +255,8 @@ BdsBootDeviceSelect (
       continue;
     }
 
+    BdsEntryMessage (L"INFO: Found EFI program payload!\r\n");
+
     ImageHandle = NULL;
     Status      = gBS->LoadImage (
                          TRUE,
@@ -265,12 +267,17 @@ BdsBootDeviceSelect (
                          &ImageHandle
                          );
 
-    if (!EFI_ERROR (Status)) {
-      gBS->StartImage (
+    if (EFI_ERROR (Status)) {
+      BdsEntryMessage (L"ERROR: Failed to load payload image (%r)\r\n", Status);
+    }
+    else {
+      BdsEntryMessage (L"INFO: Launching...\r\n");
+      Status = gBS->StartImage (
              ImageHandle,
              0,
              NULL
              );
+      BdsEntryMessage (L"ERROR: Failed to launch payload (%r)\r\n", Status);
     }
 
     FreePool (DevicePath);
