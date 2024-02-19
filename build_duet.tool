@@ -98,6 +98,8 @@ imgbuild() {
     fi
 
   done
+
+  # XXX check max size supported here !!
 }
 
 package() {
