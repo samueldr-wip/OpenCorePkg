@@ -73,7 +73,7 @@
   # Generic disk I/O (Unicode collation is used by e.g. FAT)
   INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
-  INF  OpenCorePkg/Platform/OpenPartitionDxe/PartitionDxe.inf
+  INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
 
   # Misc
   INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
