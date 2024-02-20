@@ -13,6 +13,11 @@ rec {
       OpenDuet
     ;
   };
+  QEMU = callPackage ./qemu.nix {
+    inherit
+      DiskImage
+    ;
+  };
 }
 
 ) {}
