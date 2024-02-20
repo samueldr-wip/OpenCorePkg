@@ -18,6 +18,7 @@ rec {
       DiskImage
     ;
   };
+  nixos-iso = callPackage ./nixos-iso.nix {};
 }
 
 ) {}
